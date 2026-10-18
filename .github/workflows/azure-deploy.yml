@@ -1,0 +1,74 @@
+name: Deploy Aegean Agent Governance demo
+
+on:
+  workflow_dispatch:
+    inputs:
+      sponsor_object_id:
+        description: 'Object ID of the workforce sponsor (Entra user)'
+        required: true
+      resource_group:
+        description: 'Azure resource group name'
+        required: true
+        default: 'rg-aegean-agent-demo'
+      location:
+        description: 'Azure region'
+        required: true
+        default: 'westeurope'
+      app_name:
+        description: 'Web App name (global unique)'
+        required: true
+        default: 'app-aegean-agents-${{ github.run_id }}'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up PowerShell
+        uses: PowerShell/PowerShell@v1
+        with:
+          pwsh-version: '7.4.x'
+
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ env.AZURE_CLIENT_ID }}
+          tenant-id: ${{ env.AZURE_TENANT_ID }}
+          subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Install Graph module
+        shell: pwsh
+        run: |
+          Set-PSRepository PSGallery -InstallationPolicy Trusted
+          Install-Module Microsoft.Graph.Authentication -Scope CurrentUser -Force
+
+      - name: Deploy infrastructure and app
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          ./scripts/Deploy.ps1 `
+            -SubscriptionId $env:AZURE_SUBSCRIPTION_ID `
+            -TenantId $env:AZURE_TENANT_ID `
+            -SponsorObjectId '${{ inputs.sponsor_object_id }}' `
+            -ResourceGroup '${{ inputs.resource_group }}' `
+            -Location '${{ inputs.location }}' `
+            -AppName '${{ inputs.app_name }}'
+
+      - name: Output App URL
+        if: always()
+        shell: pwsh
+        run: |
+          $rg='${{ inputs.resource_group }}'
+          $app='${{ inputs.app_name }}'
+          $url = (az webapp show -g $rg -n $app --query defaultHostName -o tsv)
+          if ($LASTEXITCODE -eq 0 -and $url) { Write-Host "App URL: https://$url" } else { Write-Host 'App URL lookup skipped' }

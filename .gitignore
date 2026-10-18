@@ -1,0 +1,7 @@
+.copilot-azure/
+node_modules/
+.env
+data/
+coverage/
+infra/main.json
+identity-state.json

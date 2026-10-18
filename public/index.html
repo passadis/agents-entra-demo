@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Aegean · Agent Governance</title><link rel="stylesheet" href="/styles.css"><script src="/app.js" defer></script></head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="/" aria-label="Aegean home"><span class="brandmark">A</span><span>AEGEAN<span class="brand-sub">FREIGHT & LOGISTICS</span></span></a>
+    <div class="workspace-label">OPERATIONS WORKSPACE</div>
+    <nav aria-label="Main navigation"><button class="nav active" data-view="overview"><span>◈</span> Command center</button><button class="nav" data-view="identities"><span>▧</span> Identity registry</button><button class="nav" data-view="audit"><span>≡</span> Audit trail</button><button class="nav" data-view="guide"><span>◎</span> Field guide</button></nav>
+    <div class="sidebar-bottom"><span class="status-dot"></span> Governance by design<p>Fictional company. Real control boundaries.</p><a href="https://learn.microsoft.com/en-us/entra/agent-id/what-is-microsoft-entra-agent-id" target="_blank" rel="noreferrer">Microsoft Entra Agent ID ↗</a></div>
+  </aside>
+  <main>
+    <header class="topbar"><div><span class="breadcrumb">Workspace</span><span class="slash">/</span><span id="view-title">Command center</span></div><div class="topbar-right"><span id="mode" class="badge">Loading</span><span id="operator" class="operator"></span><span class="avatar">AF</span></div></header>
+    <div class="page">
+      <div id="notice" class="notice" role="status"></div>
+      <section class="hero"><div><div class="eyebrow">IDENTITY IS THE CONTROL PLANE</div><h1>Agent operations,<br><span>with accountability.</span></h1><p>From a shared blueprint to an individual action.<br>See who acted, what was allowed, and why.</p></div><div class="hero-art" aria-hidden="true"><div class="orb orb1"></div><div class="orb orb2"></div><div class="art-label">BLUEPRINT<span>↓</span>IDENTITY<span>↓</span>VERIFIED ACTION</div></div></section>
+      <section id="stats" class="stats" aria-label="Governance statistics"></section>
+      <section id="overview" class="view">
+        <div class="section-heading"><div><span class="eyebrow">THE GOVERNANCE CHAIN</span><h2>One blueprint. Distinct identities.</h2></div><span class="subtle">Procurement operations / v1.0</span></div>
+        <div class="chain"><div id="blueprint" class="panel blueprint"></div><div class="chain-arrow" aria-hidden="true">→</div><div id="agents" class="agent-stack"></div></div>
+        <div class="section-heading scenario-heading"><div><span class="eyebrow">LIVE SCENARIO LAB</span><h2>Put the boundaries to work.</h2></div><label class="agent-select-label">Acting agent <select id="agent-select"><option value="piraeus">Piraeus · EU</option><option value="newark">Newark · US</option></select></label></div>
+        <p class="section-description">A depot needs supplies before its next sailing. Select a request and follow the decision to the tool boundary.</p>
+        <div id="scenarios" class="scenarios"></div>
+        <p class="agent-select-label">Inspect a previous run <select id="run-select" aria-label="Previous runs"><option value="">Select a run</option></select></p>
+        <div class="results-layout"><section class="panel result-panel"><div class="panel-heading"><h3>Decision trace</h3><span id="run-status" class="badge neutral">Ready</span></div><div id="decision" class="empty-state"><span class="empty-icon">◎</span><h3>Every action leaves a reason.</h3><p>Run a scenario to inspect policy checks, identity evidence, and the resulting action.</p></div></section><section class="panel orders-panel"><div class="panel-heading"><h3>Purchase orders</h3><span class="subtle">Fictional ledger</span></div><div id="orders"></div></section></div>
+      </section>
+      <section id="identities" class="view" hidden><div class="section-heading"><h2>Identity registry</h2><span class="subtle">Lifecycle & access accountability</span></div><div id="registry"></div></section>
+      <section id="audit" class="view" hidden><div class="section-heading"><div><span class="eyebrow">EVIDENCE, NOT ASSUMPTIONS</span><h2>Audit trail</h2></div><button class="button secondary" id="export">Export JSON ↗</button></div><p class="section-description">Application events correlate the operator, agent principal, policy decision, approval, and purchase order. Entra sign-in logs remain a separate tenant record.</p><div id="audit-table" class="panel table-wrap"></div></section>
+      <section id="guide" class="view" hidden><div class="section-heading"><h2>A field guide to agent identity</h2></div><div class="guide-grid">
+        <article class="panel"><span class="step">01 / FOUNDATION</span><h3>Microsoft Entra ID</h3><p>The identity provider authenticates people and workloads, issues tokens, and supports access policies. An identity proves who is calling; the resource still decides what that caller can do.</p></article>
+        <article class="panel"><span class="step">02 / AGENT CLASS</span><h3>Agent identity blueprint</h3><p>An application object defines a class of agents and holds its credentials. Its blueprint principal represents it within a tenant. Credential sharing makes the blueprint an important trust boundary.</p></article>
+        <article class="panel"><span class="step">03 / INDIVIDUAL ACTOR</span><h3>Agent identity</h3><p>A specialized service principal represents an agent instance. Direct permissions can differ between agents. A sponsor is accountable for its purpose and lifecycle. Agents do not store their own credentials.</p></article>
+        <article class="panel"><span class="step">04 / AUTHENTICATION</span><h3>Two-step token exchange</h3><p>Azure managed identity authenticates the blueprint. A token request with fmi_path identifies the child agent. The blueprint exchange token is then used to obtain the agent's resource token.</p></article>
+        <article class="panel"><span class="step">05 / AUTHORIZATION</span><h3>Declarations ≠ grants</h3><p>Required resource access declares permissions for consent review. Inheritance configuration plus administrator consent enables inherited permissions. A permission declaration alone grants no access. This demo provisions direct application roles.</p></article>
+        <article class="panel"><span class="step">06 / APPLICATION POLICY</span><h3>Governance beyond tokens</h3><p>Spending ceilings, depot boundaries, approvals, and review deadlines are enforced by this application. They are not native blueprint schema fields or a substitute for tenant Conditional Access.</p></article>
+      </div><article class="panel honesty"><h3>What this demonstration proves</h3><p id="mode-detail"></p><p>The default planner is deterministic; an optional Azure OpenAI planner proposes real function calls. Purchase orders and supplier data are fictional in both modes. The fixture supplier-note scenario deliberately proposes an ungranted tool; it is not a general prompt-injection detector. Local controls do not modify your Entra tenant. The supplied provisioning scripts create live identity resources separately.</p><p><a href="https://learn.microsoft.com/en-us/entra/agent-id/create-blueprint" target="_blank" rel="noreferrer">Blueprint setup ↗</a> · <a href="https://learn.microsoft.com/en-us/entra/agent-id/autonomous-agent-authentication-authorization-flow" target="_blank" rel="noreferrer">Agent authentication ↗</a> · <a href="https://learn.microsoft.com/en-us/entra/id-governance/agent-id-governance-overview" target="_blank" rel="noreferrer">Identity governance ↗</a></p></article></section>
+      <footer><span>AEGEAN / AGENT GOVERNANCE LAB</span><span>Microsoft Entra Agent ID · Research & working demonstration</span></footer>
+    </div>
+  </main>
+</body>
+</html>
