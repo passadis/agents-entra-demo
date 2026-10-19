@@ -33,7 +33,7 @@ The tool boundary is a separately defined function in the same process for this 
 
 | Resource | Purpose |
 |---|---|
-| Linux App Service, B1, Node 24 | Serves UI, policy API, worker, and tool boundary; one process, one instance |
+| Linux App Service, Premium v3 P0v3, Node 24 | Serves UI, policy API, worker, and tool boundary; one process, one instance |
 | User-assigned managed identity | Federated blueprint credential and Key Vault secret access |
 | Key Vault | Workforce login secret; RBAC and soft delete |
 | Log Analytics | Workspace for optional platform diagnostics |

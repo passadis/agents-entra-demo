@@ -13,8 +13,10 @@ param createdAt string = utcNow()
 param enableDiagnostics bool = false
 @allowed(['simulation', 'entra'])
 param identityMode string = 'entra'
-@allowed(['fixture', 'azure-openai'])
+@allowed(['fixture', 'azure-openai', 'microsoft-agent-framework'])
 param plannerMode string = 'fixture'
+@allowed(['node', 'python'])
+param applicationRuntime string = 'node'
 param blueprintClientId string = ''
 param blueprintPrincipalId string = ''
 param toolClientId string = ''
@@ -91,7 +93,7 @@ resource plan 'Microsoft.Web/serverfarms@2024-11-01' = {
   location: location
   tags: tags
   kind: 'linux'
-  sku: { name: 'B1', tier: 'Basic', capacity: 1 }
+  sku: { name: 'P0v3', tier: 'PremiumV3', capacity: 1 }
   properties: { reserved: true }
 }
 resource app 'Microsoft.Web/sites@2024-11-01' = {
@@ -106,14 +108,15 @@ resource app 'Microsoft.Web/sites@2024-11-01' = {
     keyVaultReferenceIdentity: identity.id
     clientAffinityEnabled: false
     siteConfig: {
-      linuxFxVersion: 'NODE|24-lts'
+      linuxFxVersion: applicationRuntime == 'python' ? 'PYTHON|3.13' : 'NODE|24-lts'
+      appCommandLine: applicationRuntime == 'python' ? 'python -m uvicorn backend.app:app --host 0.0.0.0 --port 8000 --workers 1' : ''
       alwaysOn: true
       minTlsVersion: '1.2'
       scmMinTlsVersion: '1.2'
       ftpsState: 'Disabled'
       http20Enabled: true
       healthCheckPath: '/healthz'
-      appSettings: [
+      appSettings: concat([
         { name: 'IDENTITY_MODE', value: identityMode }
         { name: 'PLANNER_MODE', value: plannerMode }
         { name: 'AZURE_TENANT_ID', value: tenantId }
@@ -130,10 +133,14 @@ resource app 'Microsoft.Web/sites@2024-11-01' = {
         { name: 'AGENT_US_PRINCIPAL_ID', value: agentUsId }
         { name: 'AZURE_OPENAI_ENDPOINT', value: openAiEndpoint }
         { name: 'AZURE_OPENAI_DEPLOYMENT', value: openAiDeployment }
-        { name: 'WEBSITE_RUN_FROM_PACKAGE', value: '1' }
+        { name: 'SCM_DO_BUILD_DURING_DEPLOYMENT', value: applicationRuntime == 'python' ? 'true' : 'false' }
         { name: 'DATA_FILE', value: '/home/data/aegean/state.json' }
         { name: 'APPLICATIONINSIGHTS_CONNECTION_STRING', value: insights.properties.ConnectionString }
-      ]
+      ], applicationRuntime == 'python' ? [
+        { name: 'ENABLE_ORYX_BUILD', value: 'true' }
+      ] : [
+        { name: 'WEBSITE_RUN_FROM_PACKAGE', value: '1' }
+      ])
     }
   }
 }

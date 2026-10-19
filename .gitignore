@@ -1,7 +1,15 @@
 .copilot-azure/
 node_modules/
+.venv/
+.venv-*/
+__pycache__/
+.pytest_cache/
+*.pyc
 .env
 data/
 coverage/
 infra/main.json
+infra/subscription.json
 identity-state.json
+foundry-deployment.json
+artifacts/*.zip

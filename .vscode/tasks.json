@@ -1,0 +1,29 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Resume approved Azure provisioning",
+			"type": "shell",
+			"command": "pwsh",
+			"args": [
+				"-NoProfile",
+				"-File",
+				"${workspaceFolder}\\scripts\\Deploy.ps1",
+				"-SubscriptionId",
+				"9d47bf93-091d-480e-a512-1e918864fee7",
+				"-TenantId",
+				"35de4c50-7dcd-4871-8685-61789c017da2",
+				"-SponsorObjectId",
+				"7e35709d-f693-4896-9599-146e27046ef4",
+				"-ResourceGroup",
+				"rg-aegean-agent-demo",
+				"-Location",
+				"swedencentral",
+				"-AppName",
+				"app-aegean-agents-c6e08b90"
+			],
+			"isBackground": true,
+			"problemMatcher": []
+		}
+	]
+}

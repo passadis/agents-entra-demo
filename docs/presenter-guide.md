@@ -1,58 +1,55 @@
-# Eight-minute presentation
+# Presenting Aegean Agent Operations
 
-Start the local app with `npm start` and open `http://localhost:3000`. Optional slide introduction: open [presentation.html](presentation.html). Default fixture mode requires no internet and makes every scenario repeatable. For a verified Azure tenant deployment use the same walkthrough after confirming the live identity badge and the routine scenario's token evidence.
+Use this short narrative alongside the [operating manual](operating-manual.md), which contains the complete steps, expected amounts, and troubleshooting. This guide covers the current Python/Microsoft Agent Framework application.
 
-## 0:00–1:00 — The business problem
+## Prepare
 
-“Aegean Freight operates depots in Piraeus and Newark. An agent can help buy supplies before a ship sails. Our question is not simply whether the model can place an order. It is which identity acts, what authority it has, who is accountable, and how we stop it.”
+Open the [deployed application](https://app-aegean-agents-c6e08b90.azurewebsites.net/) and sign in as an authorized operator. To demonstrate approvals, use the configured sponsor's account. Confirm both agents are active, class activity is enabled, and reviews are current. Check existing orders and pending requests before presenting.
 
-Point to the mode badge. Say explicitly whether the demonstration is simulated or uses live Entra tokens. Both modes write fictional orders only.
+Allow time for model calls and human decisions. Never promise a fixed order number or identical wording on every run.
 
-## 1:00–2:00 — Explain the identity chain
+## 1. Explain the business problem
 
-Point to the procurement blueprint and two agents. The blueprint is the shared class/authentication foundation. A tenant blueprint principal represents it. Piraeus and Newark have distinct identities. Piraeus can read and create orders; Newark can only read.
+“Aegean Freight has depots in Piraeus and Newark. Each depot has an AI procurement agent. We want agents to prepare supplies before sailing while knowing which identity acts, which boundaries apply, and who must approve.”
 
-“An inherited configuration is not the same thing as an approved permission. This demo uses direct role grants so you can see the difference between siblings. Native blueprint inheritance is available with explicit configuration and consent.”
+Explain the scope: real framework agents, model inference, Entra sign-in, and agent identities; synthetic stock, suppliers, and purchase orders. No supplier receives an order and no money moves.
 
-## 2:00–3:00 — A permitted action
+## 2. Introduce identity and authority
 
-Select Piraeus. Run **Routine replenishment** (€420). Show all checks passing and `PO-0001`. Expand the verified identity evidence. Explain that the raw token is never shown to the browser. In live mode the role and principal came from a verified Entra JWT; in simulation they came from a signed local capability.
+Open **Identity registry**. Show one blueprint and two distinct regional agent identities. Both have Orders.Read and Orders.Create; the application enforces their regional boundaries.
 
-“The token identifies the caller and API roles. Our application also checks depot, spending, review status, and approval.”
+“The host managed identity accesses the model and blueprint federation. The regional identity authenticates business-tool calls. A prompt does not grant permission: the tool boundary validates the token and current policy.”
 
-## 3:00–4:00 — Human oversight
+The framework runs in App Service. Foundry hosts the model in the same resource group. This is not a Foundry-hosted agent runtime.
 
-Run **Urgent spare part** (€2,400). Show that no order exists yet. Approve the exact saved request. Show the audit entries for the human approval and subsequent agent execution. Approval does not add OAuth permissions or turn the autonomous token into an OBO token.
+## 3. Show two agents doing useful work
 
-For an extra demonstration, create another pending request, pause the blueprint, and approve it. The request is denied because current policy is rechecked. Resume the blueprint afterward.
+In **Coordinate both depots**, run **Assess both depots**, then **Add sailing reserves**. The first task is research-only; the second authorizes 20 additional seals per depot.
 
-## 4:00–5:00 — Least privilege and business boundaries
+Inspect each regional trace, verified identity evidence, and ledger order. Fast catalogue offers produce EU €84 and US €76, totaling €160. Confirm the actual recorded result rather than relying on model prose.
 
-Run **Spending limit** (€12,500), then **Regional boundary** using Piraeus. Explain the individual failing check. Select Newark and rerun the regional scenario: its depot matches US, but the create role is missing.
+Show **Shared progress reports**: agents receive limited status summaries, not another region's inventory or credentials. The application coordinates separate framework sessions and combines confirmed outcomes.
 
-“Sharing a blueprint does not mean these instances need identical direct grants. A model cannot grant itself the missing permission.”
+## 4. Show independent human oversight
 
-## 5:00–6:00 — Untrusted instructions and lifecycle
+Run **Sensors for both depots**. Open each saved approval request. Review its exact region, supplier, quantity, and amount.
 
-Switch back to Piraeus. Run **Malicious supplier note**. The fixture deliberately proposes bank-data export; the allowlist denies it before token acquisition. Say that this demonstrates containment of an ungranted proposal, not a universal prompt-injection detector. In model mode the model may avoid that proposal, so outcomes can vary.
+Approve Piraeus and show Newark still waiting. Refresh and reopen the mission if useful, then approve Newark separately. Catalogue amounts are €2,400 and €2,250.
 
-Expire Piraeus's review, run the routine request, and show denial. Renew the review. Suspend the agent, repeat, and reactivate. Pause the blueprint and show both identities are locally blocked.
+“Approval resumes the saved session. It cannot override a missing role, suspension, regional boundary, expired review, or the €5,000 purchase ceiling.”
 
-## 6:00–7:00 — Evidence and boundaries
+## 5. Show boundaries and partial completion
 
-Open **Audit trail**, export JSON, and inspect the actor IDs and run correlation. In live mode compare with Entra sign-in logs separately.
+Run **Cross-region request** or **Spending boundary** as an individual agent. Explain whether the model refused or a tool call was actually denied; the trace distinguishes them.
 
-“These switches are enforced application policy. They do not modify our Entra tenant. Tenant Conditional Access, risk policies, and access governance must also be configured for a real rollout.”
+Suspend Newark, then start **Add sailing reserves**. Inspect Piraeus's outcome and Newark's blocked task. Only confirmed purchases count toward the mission total. Restore Newark afterward.
 
-## 7:00–8:00 — Show the Azure architecture
+“One region's failure does not erase an order already recorded in the other. Restoring an agent does not replay denied work.”
 
-Open **Field guide**, then the architecture document if needed. Explain workforce sign-in, the host's managed identity, blueprint federation, agent resource token, and resource-side policy. The host's managed identity and agent identity have different jobs.
+## 6. Finish with evidence and scope
 
-Finish by identifying the next production changes: separate tool service, transactional database, protected audit sink, tenant governance policies, and explicit lifecycle ownership. The current deployment stays at one process/instance because the ledger is a JSON demo store.
+Open **Audit trail**, correlate mission and run IDs, and export JSON. Show the chain from human request through agent identity, tool activity, sponsor decision, and ledger outcome. Raw access tokens are not displayed.
 
-## Reset and presentation recovery
+“The pause, suspension, and review switches enforce application policy. They do not disable directory identities or configure native Entra Conditional Access or access reviews. Production adoption needs those tenant processes, business integrations, and protected audit retention.”
 
-- Use the previous-run selector to reopen a pending approval or inspect earlier results after a page refresh.
-- Resume paused identities/blueprint and renew expired reviews before the success scenarios.
-- For a clean local ledger, stop the server, **move** `data/state.json` to an archive filename, and restart. This creates a fresh fictional registry. Do not reset a live ledger during execution.
-- If a live exchange fails, preserve its denied run and inspect tenant grants, federation, consent, and sign-in logs. Do not describe simulation as live evidence.
+For a shorter presentation, show identity, sailing reserves, and separate sensor approvals. Keep the full [operating manual](operating-manual.md) available for questions.

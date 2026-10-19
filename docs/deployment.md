@@ -1,15 +1,18 @@
 # Azure deployment runbook
 
+For the real Microsoft Agent Framework replacement, Foundry in the existing resource group, and both agents' procurement roles, follow [the agentic rollout guide](agentic-upgrade.md). The legacy commands below apply to the original Node/fixture deployment; do not use the legacy publisher after switching the Web App to Python.
+
 ## Prepared target
 
-- Subscription: **AzureDev** (`c6e08b90-7ae0-4f00-8478-a1d4e73991d2`).
+- Subscription: **Visual Studio Enterprise Subscription** (`9d47bf93-091d-480e-a512-1e918864fee7`).
 - Tenant: `35de4c50-7dcd-4871-8685-61789c017da2`.
 - Proposed resource group: `rg-aegean-agent-demo`.
-- Proposed region: `westeurope`.
+- Proposed region: `swedencentral` (Sweden Central), selected by the user after the East US 2 quota blocker.
+- Required App Service plan: **Premium v3 P0v3**, one Linux instance. Do not substitute B1 or another SKU.
 - Proposed web app: `app-aegean-agents-c6e08b90` (global name availability is checked during deployment).
 - Proposed tenant sponsor: the signed-in user, object ID `7e35709d-f693-4896-9599-146e27046ef4`. This is a proposed assignment, not an existing live sponsor relationship.
 
-These are the read-only discovered Azure account and proposed names. No Azure resources or tenant identities were created while preparing the demo. Keep `identity-state.json` after provisioning; it records object IDs for resumable setup and eventual cleanup. It contains no tokens or secrets and is ignored by Git.
+These targets were refreshed for the user's fresh-session request. The user reports that a separate VS Code deployment attempt created only the resource group and will delete it. Verify deletion has completed before recreating it. Keep any `identity-state.json` after provisioning; deleting an Azure resource group does not delete Entra objects. It records object IDs for resumable setup and cleanup, contains no tokens or secrets, and is ignored by Git.
 
 ## Prerequisites
 
@@ -33,9 +36,10 @@ Review [infra/main.bicep](../infra/main.bicep) and the three scripts. Then, from
 
 ```powershell
 ./scripts/Deploy.ps1 `
-  -SubscriptionId c6e08b90-7ae0-4f00-8478-a1d4e73991d2 `
+  -SubscriptionId 9d47bf93-091d-480e-a512-1e918864fee7 `
   -TenantId 35de4c50-7dcd-4871-8685-61789c017da2 `
-  -SponsorObjectId 7e35709d-f693-4896-9599-146e27046ef4
+  -SponsorObjectId 7e35709d-f693-4896-9599-146e27046ef4 `
+  -Location swedencentral
 ```
 
 The script connects to Microsoft Graph interactively, creates/verifies the identity objects, creates the resource group, runs ARM what-if, deploys infrastructure, configures MI federation on the blueprint, stores the separate workforce application's sign-in secret in Key Vault, deploys a ZIP containing only the application assets, and checks health. It defaults to **live Entra identity + fixture planner**. A separate Graph authentication session may require your interaction; Azure RBAC and Graph permissions are independent.
@@ -66,7 +70,7 @@ Model configuration is independent of Agent ID. The host identity may call the i
 
 ## Costs and availability
 
-The Azure Retail Prices API returned **B1 Linux, West Europe, USD $0.018 per hour** at preparation time. At 730 hours that is **$13.14/month** for the one-instance plan. West Europe was listed as B1 Linux eligible, and the regional Microsoft.Web usage query reported 0/30 for its returned aggregate quota. That aggregate is not a reservation or a guarantee of subscription SKU capacity. ARM validation and deployment remain authoritative.
+The current target is **Sweden Central**. The Azure Retail Prices API returned **Premium v3 P0v3 Linux, USD $0.089 per hour**, approximately **$64.97/month** for one instance at 730 hours. Sweden Central reports a Total Regional VMs allowance of 30 with usage 0; its quota API exposes only the aggregate entry, not a separate P0v3 entry. The actual subscription-scope ARM what-if passed with P0v3, proposing 12 creates and no deletes. This supersedes the previous East US 2 and B1 estimates. It is a successful preview, not a reservation or a completed deployment. Never fall back to B1 to bypass a quota or capacity error.
 
 Key Vault operations, Log Analytics ingestion/retention, Application Insights usage, bandwidth, taxes, workforce licensing, Agent ID/Agent 365/Entra Governance licensing, and optional model inference are additional. Log Analytics uses a 1 GB/day ingestion cap as a guardrail; it is not a total spending cap. Do not assume licenses or free credits are present. [Azure Retail Prices API](https://learn.microsoft.com/en-us/rest/api/cost-management/retail-prices/azure-retail-prices), [Agent governance licensing requirements](https://learn.microsoft.com/en-us/entra/id-governance/agent-id-governance-overview), [Agent Conditional Access licensing](https://learn.microsoft.com/en-us/entra/identity/conditional-access/agent-id).
 

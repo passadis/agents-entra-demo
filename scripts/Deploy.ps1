@@ -4,7 +4,7 @@ param(
   [Parameter(Mandatory)][guid]$SubscriptionId,
   [Parameter(Mandatory)][guid]$TenantId,
   [Parameter(Mandatory)][guid]$SponsorObjectId,
-  [string]$Location = 'westeurope',
+  [string]$Location = 'swedencentral',
   [string]$ResourceGroup = 'rg-aegean-agent-demo',
   [ValidatePattern('^[a-z0-9-]{2,60}$')][string]$AppName = 'app-aegean-agents-c6e08b90',
   [string]$StatePath = (Join-Path $PSScriptRoot '../identity-state.json')

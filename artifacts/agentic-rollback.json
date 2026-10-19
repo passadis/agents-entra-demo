@@ -1,0 +1,14 @@
+{
+  "config": {
+    "appCommandLine": "",
+    "linuxFxVersion": "NODE|24-lts"
+  },
+  "settings": {
+    "PLANNER_MODE": "fixture",
+    "WEBSITE_RUN_FROM_PACKAGE": "1",
+    "SCM_DO_BUILD_DURING_DEPLOYMENT": "false"
+  },
+  "subscriptionId": "9d47bf93-091d-480e-a512-1e918864fee7",
+  "appName": "app-aegean-agents-c6e08b90",
+  "resourceGroup": "rg-aegean-agent-demo"
+}
