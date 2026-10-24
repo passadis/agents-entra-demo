@@ -33,6 +33,10 @@ def create_app(env=None, client_factory=None, identity=None):
     app = FastAPI(lifespan=lifespan, docs_url=None, redoc_url=None, openapi_url=None)
     app.state.runtime, app.state.store = runtime, store
 
+    @app.exception_handler(Exception)
+    async def unexpected_error(request: Request, error: Exception):
+        return JSONResponse({"error": "Internal server error"}, status_code=500)
+
     def operator(request):
         if not hosted:
             return {"id": "local-demo-sponsor", "name": "Local presenter"}
