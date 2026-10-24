@@ -26,3 +26,18 @@ async def test_hosted_api_requires_allowed_operator_and_rejects_foreign_origin(t
         result = await client.get("/")
         assert result.status_code == 200 and "frame-ancestors 'none'" in result.headers["content-security-policy"]
     app.state.store.db.close()
+
+@pytest.mark.asyncio
+async def test_unexpected_api_errors_are_not_exposed(tmp_path):
+    env = {"AGENTIC_DATA_FILE": str(tmp_path / "test.sqlite"), "DATA_FILE": str(tmp_path / "none.json")}
+    app = create_app(env, identity=TestIdentity())
+
+    def fail_approval(*args, **kwargs):
+        raise RuntimeError("secret database connection details")
+
+    app.state.runtime.approve = fail_approval
+    async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app, raise_app_exceptions=False), base_url="http://localhost") as client:
+        response = await client.post("/api/approve", json={"runId": "test"})
+    assert response.status_code == 500
+    assert response.json() == {"error": "Internal server error"}
+    app.state.store.db.close()
