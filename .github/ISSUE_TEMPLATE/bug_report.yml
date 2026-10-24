@@ -1,0 +1,78 @@
+name: Bug report
+description: Report a reproducible problem in the application, documentation, or deployment tooling.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve Aegean Agent Operations.
+        **For vulnerabilities, follow [SECURITY.md](https://github.com/passadis/agents-entra-demo/blob/main/SECURITY.md) instead.**
+        Remove tokens, secrets, private identity data, and sensitive URLs from all logs and screenshots.
+  - type: dropdown
+    id: component
+    attributes:
+      label: Affected component
+      options:
+        - Python framework agents or API
+        - Dashboard or approvals UI
+        - Entra identity or application governance behavior (non-security bug)
+        - Azure deployment or infrastructure
+        - Documentation
+        - Legacy Node fixture demo
+        - Other or unsure
+    validations:
+      required: true
+  - type: input
+    id: revision
+    attributes:
+      label: Branch or commit
+      description: Include the commit SHA if known; do not include credentials or private deployment files.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Local or Azure, OS, browser, Python or Node version, and relevant dependency versions. State whether model and identity dependencies are live or mocked.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Include the scenario or mission, selected agent, policy state, and whether prior orders or approvals exist. Use synthetic examples.
+      placeholder: |
+        1. Open ...
+        2. Select ...
+        3. Run ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Include the visible status and error. Distinguish a model refusal from a server denial when possible.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Redacted logs or screenshots
+      description: Optional evidence. Do not share raw JWTs, secrets, checkpoints, or private tenant records.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and checked the operating manual.
+          required: true
+        - label: This report contains no credentials or private data and is not a vulnerability disclosure.
+          required: true
+        - label: I agree to follow this project's [Code of Conduct](https://github.com/passadis/agents-entra-demo/blob/main/CODE_OF_CONDUCT.md).
+          required: true

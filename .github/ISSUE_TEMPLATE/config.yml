@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Private security reporting
+    url: https://github.com/passadis/agents-entra-demo/blob/main/SECURITY.md
+    about: Read the private reporting process before sharing any vulnerability details.
+  - name: Operating manual
+    url: https://github.com/passadis/agents-entra-demo/blob/main/docs/operating-manual.md
+    about: Start here for setup expectations, browser workflows, approvals, and troubleshooting.

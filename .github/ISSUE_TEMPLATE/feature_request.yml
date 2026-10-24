@@ -1,0 +1,43 @@
+name: Feature request
+description: Suggest an improvement to the demo or contributor experience.
+title: "[Feature]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Explain the user need and how the improvement helps demonstrate useful, governed agent operation.
+        Use [SECURITY.md](https://github.com/passadis/agents-entra-demo/blob/main/SECURITY.md) for vulnerabilities.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: Who needs this, and what is difficult today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Describe the expected experience and how a reviewer could tell it works.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: textarea
+    id: impact
+    attributes:
+      label: Identity, governance, or deployment impact
+      description: Note any new permissions, data sharing, approval changes, services, or costs. Write "None known" if not applicable.
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and checked the operating manual.
+          required: true
+        - label: I agree to follow this project's [Code of Conduct](https://github.com/passadis/agents-entra-demo/blob/main/CODE_OF_CONDUCT.md).
+          required: true

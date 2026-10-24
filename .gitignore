@@ -1,4 +1,6 @@
 .copilot-azure/
+# Local-only files and directories at any depth
+local_*
 node_modules/
 .venv/
 .venv-*/
