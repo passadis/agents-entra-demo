@@ -18,10 +18,10 @@ async def test_hosted_api_requires_allowed_operator_and_rejects_foreign_origin(t
         headers = {"x-ms-client-principal": principal}
         assert (await client.get("/api/state", headers=headers)).status_code == 200
         result = await client.post("/api/control", headers={**headers, "origin": "https://attacker.invalid"}, json={"target": "blueprint", "action": "toggle"})
-        assert result.status_code == 403
+        assert result.status_code == 403 and result.json() == {"error": "Forbidden"}
         assert app.state.store.state["blueprint"]["enabled"]
         invalid = await client.post("/api/collaborate", headers=headers, json={"kind": "unrecognized-mission"})
-        assert invalid.status_code == 400
+        assert invalid.status_code == 400 and invalid.json() == {"error": "Invalid request"}
         assert app.state.store.state["missions"] == []
         result = await client.get("/")
         assert result.status_code == 200 and "frame-ancestors 'none'" in result.headers["content-security-policy"]

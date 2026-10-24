@@ -61,10 +61,10 @@ def create_app(env=None, client_factory=None, identity=None):
                     if len(await request.body()) > 16384:
                         return JSONResponse({"error": "Request too large"}, status_code=413)
             response = await call_next(request)
-        except PermissionError as error:
-            response = JSONResponse({"error": str(error)}, status_code=403)
-        except (ValueError, KeyError, StopIteration) as error:
-            response = JSONResponse({"error": str(error) or "Unknown request target"}, status_code=400)
+        except PermissionError:
+            response = JSONResponse({"error": "Forbidden"}, status_code=403)
+        except (ValueError, KeyError, StopIteration):
+            response = JSONResponse({"error": "Invalid request"}, status_code=400)
         response.headers.update({"Cache-Control": "no-store", "X-Content-Type-Options": "nosniff", "Referrer-Policy": "same-origin",
                                  "Content-Security-Policy": "default-src 'self'; style-src 'self'; script-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'"})
         return response
